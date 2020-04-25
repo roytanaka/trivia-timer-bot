@@ -1,3 +1,4 @@
+require('dotenv').config();
 const Discord = require('discord.js');
 const { prefix, token, emojis } = require('./config.json');
 const client = new Discord.Client();
@@ -24,4 +25,4 @@ client.on('message', async (message) => {
   }
 });
 
-client.login(token);
+client.login(process.env.DISCORD_TOKEN);
