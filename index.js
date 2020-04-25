@@ -21,7 +21,7 @@ client.on('message', async (message) => {
         clearInterval(interval);
       } else if (i % 5 === 0 || (i >= 12 && i <= 14)) {
         // Update timer at 15, 10, 5, 3, 2, 1
-        msg.edit(':mega: Submit your answer in ' + emojis[i] + ' seconds!');
+        msg.edit(`:mega: Submit your answer in ${emojis[i]} seconds!`);
       }
       i++;
     }, 1000);
