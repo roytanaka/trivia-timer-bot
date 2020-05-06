@@ -14,7 +14,7 @@ client.on('message', async (message) => {
   // Only start timer on Channel names that start with 'trivia'
   if (!message.channel.name.startsWith('trivia')) return;
   // Start timer with ::Q prefix
-  if (message.content.startsWith(prefix)) {
+  if (message.content.startsWith(`${prefix}Q`)) {
     const msg = await message.channel.send(`:mega: Timer Starting!`);
     let i = 0;
     const interval = setInterval(() => {
