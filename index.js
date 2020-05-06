@@ -3,8 +3,14 @@ const Discord = require('discord.js');
 const { prefix, emojis } = require('./config.json');
 const client = new Discord.Client();
 
+let triviaRoleId;
+
 client.once('ready', () => {
   console.log('Ready!');
+  // get Trivia Master role ID for use later
+  triviaRoleId = client.guilds.cache.first().roles.cache.find((role) => {
+    return role.name.includes('Trivia Master');
+  }).id;
 });
 
 client.on('message', async (message) => {
