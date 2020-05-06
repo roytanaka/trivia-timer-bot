@@ -8,6 +8,9 @@ client.once('ready', () => {
 });
 
 client.on('message', async (message) => {
+  // Check if role includes Trivia Master
+  const roles = message.member.roles.cache;
+  if (!roles.some((role) => role.name.includes('Trivia Master'))) return;
   // Only start timer on Channel names that start with 'trivia'
   if (!message.channel.name.startsWith('trivia')) return;
   // Start timer with ::Q prefix
