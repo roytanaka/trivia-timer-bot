@@ -13,6 +13,18 @@ client.once('ready', () => {
   }).id;
 });
 
+// Only Trivia Master Role can add ✅
+client.on('messageReactionAdd', (reaction, user) => {
+  if (reaction.emoji.name !== '✅') return;
+  // Members with Trivia Master Role
+  const membersWithRole = reaction.message.guild.roles.cache.get(triviaRoleId)
+    .members;
+  // Remove ✅ if not Trivia Master
+  if (!membersWithRole.some((member) => member.id === user.id)) {
+    reaction.remove(user);
+  }
+});
+
 client.on('message', async (message) => {
   // Check if role includes Trivia Master
   const roles = message.member.roles.cache;
@@ -34,6 +46,22 @@ client.on('message', async (message) => {
       }
       i++;
     }, 1000);
+  }
+
+  // Display scores with::scores command
+  if (message.content.startsWith(`${prefix}scores`)) {
+    const today = Number(new Date().setHours(0, 0, 0, 0));
+    const messages = message.channel.messages.cache
+      .array()
+      //filter out bots and messages earlier than today
+      .filter((msg) => !msg.author.bot && msg.createdTimestamp > today);
+    console.log('log: messages', messages);
+    // filter for correct answers i.e. msg with ✅ reaction
+    const correct = messages.filter((msg) =>
+      msg.reactions.cache.find((reaction) => reaction._emoji.name === '✅')
+    );
+
+    const msg = await message.channel.send(`Total correct: ${correct.length}`);
   }
 });
 
