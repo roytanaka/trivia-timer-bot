@@ -10,8 +10,6 @@ module.exports = {
     scores.forEach((score) => {
       currentScores += `*${score.user}* - **${score.score}**\n`;
     });
-    console.log(currentScores);
-
     await message.channel.send(currentScores.trim());
     // message.delete();
   },
