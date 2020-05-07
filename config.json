@@ -16,5 +16,7 @@
     ":three:",
     ":two:",
     ":one:"
-  ]
+  ],
+  "correctMoji": "✅",
+  "halfMoji": "🔶"
 }

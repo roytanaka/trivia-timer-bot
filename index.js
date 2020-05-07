@@ -19,7 +19,6 @@ client.once('ready', () => {
 });
 
 client.on('messageReactionAdd', (reaction, user) => {
-  if (reaction.emoji.name !== '✅') return;
   client.commands.get('correctReaction').execute(reaction, user);
 });
 
@@ -44,6 +43,10 @@ client.on('message', async (message) => {
       break;
     case 'scores':
       client.commands.get('scores').execute(message);
+      break;
+    case 'final':
+      client.commands.get('final').execute(message);
+      break;
     default:
       break;
   }
