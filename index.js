@@ -3,19 +3,17 @@ const Discord = require('discord.js');
 const { prefix, emojis } = require('./config.json');
 const client = new Discord.Client();
 
-let triviaRoleId;
-
 client.once('ready', () => {
   console.log('Ready!');
-  // get Trivia Master role ID for use later
-  triviaRoleId = client.guilds.cache.first().roles.cache.find((role) => {
-    return role.name.includes('Trivia Master');
-  }).id;
 });
 
 // Only Trivia Master Role can add ✅
 client.on('messageReactionAdd', (reaction, user) => {
   if (reaction.emoji.name !== '✅') return;
+  // get Trivia Master role ID
+  const triviaRoleId = reaction.message.guild.roles.cache.find((role) => {
+    return role.name.includes('Trivia Master');
+  }).id;
   // Members with Trivia Master Role
   const membersWithRole = reaction.message.guild.roles.cache.get(triviaRoleId)
     .members;
