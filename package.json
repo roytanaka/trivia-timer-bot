@@ -1,13 +1,11 @@
 {
-  "name": "discord-bot",
+  "name": "trivia-timer-bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "A 15 second Trivia Timer and score keeper bot for Discord",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "keywords": [],
-  "author": "",
+  "author": "Roy Tanaka",
   "license": "ISC",
   "dependencies": {
     "discord.js": "^12.2.0",

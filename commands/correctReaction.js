@@ -13,9 +13,12 @@ module.exports = {
     // Members with Trivia Master Role
     const membersWithRole = reaction.message.guild.roles.cache.get(triviaRoleId)
       .members;
-    // Remove if not Trivia Master
-    if (!membersWithRole.some((member) => member.id === user.id)) {
-      await reaction.remove(user);
+    if (reaction.count > 1) {
+      // reaction.remove() removes all reactions including the Trivia Masters. Ignore if already has a reaction
+      return;
+    } else if (!membersWithRole.some((member) => member.id === user.id)) {
+      // Remove if not Trivia Master
+      await reaction.remove();
     }
   },
 };
