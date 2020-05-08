@@ -27,7 +27,7 @@ client.on('message', async (message) => {
   if (!message.content.startsWith(prefix) || message.author.bot) return;
   // Check if role includes Trivia Master
   const roles = message.member.roles.cache;
-  if (!roles.some((role) => role.name.includes('Trivia Master'))) return;
+  if (!roles.some((role) => role.name.includes('TRIVIA MASTER'))) return;
   // Check if Channel names starts with 'trivia'
   if (!message.channel.name.startsWith('trivia')) return;
 
