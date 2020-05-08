@@ -3,7 +3,7 @@ const { correctMoji, halfMoji } = require('../config.json');
 module.exports = {
   name: 'correctReaction',
   description: 'Prevent adding ✅ and 🔶 for anyone without Trivia Master role',
-  execute(reaction, user) {
+  async execute(reaction, user) {
     const emoji = reaction.emoji.name;
     if (emoji !== correctMoji && emoji !== halfMoji) return;
     // get Trivia Master role ID
@@ -15,7 +15,7 @@ module.exports = {
       .members;
     // Remove if not Trivia Master
     if (!membersWithRole.some((member) => member.id === user.id)) {
-      reaction.remove(user);
+      await reaction.remove(user);
     }
   },
 };
