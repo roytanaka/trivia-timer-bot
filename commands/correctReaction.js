@@ -8,7 +8,7 @@ module.exports = {
     if (emoji !== correctMoji && emoji !== halfMoji) return;
     // get Trivia Master role ID
     const triviaRoleId = reaction.message.guild.roles.cache.find((role) => {
-      return role.name.includes('Trivia Master');
+      return role.name.includes('TRIVIA MASTER');
     }).id;
     // Members with Trivia Master Role
     const membersWithRole = reaction.message.guild.roles.cache.get(triviaRoleId)
