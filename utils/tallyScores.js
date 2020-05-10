@@ -1,4 +1,4 @@
-const { correctMoji, halfMoji, bonusMoji } = require('../config.json');
+const { scoreKeepers } = require('../config.json');
 
 const getScores = (message) => {
   // get nicknames of all users on server
@@ -6,11 +6,13 @@ const getScores = (message) => {
   message.guild.members.cache.forEach((member) => {
     nicknames[member.user.id] = member.nickname;
   });
-  const yesterday = new Date().setDate(new Date().getDate() - 1);
+  const threeHoursAgo = new Date(
+    new Date().setHours(new Date().getHours() - 3)
+  );
   const messages = message.channel.messages.cache
     .array()
-    //filter out bots and messages earlier than today
-    .filter((msg) => !msg.author.bot && msg.createdTimestamp > yesterday);
+    //filter out bots and messages earlier 3 hours
+    .filter((msg) => !msg.author.bot && msg.createdTimestamp > threeHoursAgo);
 
   const contestants = new Map();
   // unique contestants list
@@ -18,22 +20,18 @@ const getScores = (message) => {
     contestants.set(message.author.id, message.author);
   }
 
-  // filter for correct answers i.e. msg with ✅ reaction
-  const correctMessages = messages.filter((msg) =>
-    msg.reactions.cache.find((reaction) => reaction._emoji.name === correctMoji)
-  );
-  const halfCorrectMsgs = messages.filter((msg) =>
-    msg.reactions.cache.find((reaction) => reaction._emoji.name === halfMoji)
-  );
-  const bonusCorrectMsgs = messages.filter((msg) =>
-    msg.reactions.cache.find((reaction) => reaction._emoji.name === bonusMoji)
-  );
-
+  let score = 0;
   for (const id of contestants.keys()) {
-    const correct = correctMessages.filter((msg) => msg.author.id === id);
-    const half = halfCorrectMsgs.filter((msg) => msg.author.id === id);
-    const bonus = bonusCorrectMsgs.filter((msg) => msg.author.id === id);
-    const score = bonus.length + correct.length + half.length / 2;
+    scoreKeepers.forEach((scoreKeeper) => {
+      const filteredMessages = messages
+        .filter((msg) =>
+          msg.reactions.cache.find(
+            (reaction) => reaction._emoji.name === scoreKeeper.emoji
+          )
+        )
+        .filter((msg) => msg.author.id === id);
+      score += filteredMessages.length * scoreKeeper.score;
+    });
     const user = contestants.get(id);
     user.score = score;
     user.nickname = nicknames[id];

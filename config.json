@@ -17,7 +17,21 @@
     ":two:",
     ":one:"
   ],
-  "correctMoji": "✅",
-  "halfMoji": "🔶",
-  "bonusMoji": "⭐"
+  "scoreKeepers": [
+    {
+      "name": "correct",
+      "emoji": "✅",
+      "score": 1
+    },
+    {
+      "name": "half",
+      "emoji": "🔶",
+      "score": 0.5
+    },
+    {
+      "name": "bonus",
+      "emoji": "⭐",
+      "score": 1
+    }
+  ]
 }

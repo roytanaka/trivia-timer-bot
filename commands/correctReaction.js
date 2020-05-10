@@ -1,4 +1,4 @@
-const { correctMoji, halfMoji, bonusMoji } = require('../config.json');
+const { scoreKeepers } = require('../config.json');
 
 module.exports = {
   name: 'correctReaction',
@@ -6,8 +6,12 @@ module.exports = {
     'Prevent adding ⭐️, ✅ and 🔶 for anyone without Trivia Master role',
   async execute(reaction, user) {
     const emoji = reaction.emoji.name;
-    if (emoji !== correctMoji && emoji !== halfMoji && emoji !== bonusMoji)
-      return;
+
+    const isScoreKeeper = scoreKeepers
+      .map((keeper) => keeper.emoji)
+      .includes(emoji);
+
+    if (!isScoreKeeper) return;
     // get Trivia Master role ID
     const triviaRoleId = reaction.message.guild.roles.cache.find((role) => {
       return role.name.includes('TRIVIA MASTER');
