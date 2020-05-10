@@ -1,4 +1,4 @@
-const { correctMoji, halfMoji } = require('../config.json');
+const { correctMoji, halfMoji, bonusMoji } = require('../config.json');
 
 const getScores = (message) => {
   // get nicknames of all users on server
@@ -25,11 +25,15 @@ const getScores = (message) => {
   const halfCorrectMsgs = messages.filter((msg) =>
     msg.reactions.cache.find((reaction) => reaction._emoji.name === halfMoji)
   );
+  const bonusCorrectMsgs = messages.filter((msg) =>
+    msg.reactions.cache.find((reaction) => reaction._emoji.name === bonusMoji)
+  );
 
   for (const id of contestants.keys()) {
     const correct = correctMessages.filter((msg) => msg.author.id === id);
     const half = halfCorrectMsgs.filter((msg) => msg.author.id === id);
-    const score = correct.length + half.length / 2;
+    const bonus = bonusCorrectMsgs.filter((msg) => msg.author.id === id);
+    const score = bonus.length + correct.length + half.length / 2;
     const user = contestants.get(id);
     user.score = score;
     user.nickname = nicknames[id];
