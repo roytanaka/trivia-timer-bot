@@ -27,18 +27,18 @@ const getScores = (message) => {
     contestants.set(message.author.id, message.author);
   }
 
-  let score = 0;
   for (const id of contestants.keys()) {
-    scoreKeepers.forEach((scoreKeeper) => {
-      const filteredMessages = messages
-        .filter((msg) =>
-          msg.reactions.cache.find(
-            (reaction) => reaction._emoji.name === scoreKeeper.emoji
-          )
-        )
-        .filter((msg) => msg.author.id === id);
-      score += filteredMessages.length * scoreKeeper.score;
-    });
+    const score = scoreKeepers.reduce((total, scoreKeeper) => {
+      const filteredMessages = messages.filter((msg) => {
+        const emoji = msg.reactions.cache.find((reaction) => {
+          return reaction._emoji.name === scoreKeeper.emoji;
+        });
+        const author = msg.author.id === id;
+        return emoji && author;
+      });
+      return total + filteredMessages.length * scoreKeeper.score;
+    }, 0);
+
     const user = contestants.get(id);
     user.score = score;
     user.nickname = nicknames[id];
