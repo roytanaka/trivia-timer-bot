@@ -12,7 +12,14 @@ const getScores = (message) => {
   const messages = message.channel.messages.cache
     .array()
     //filter out bots and messages earlier 3 hours
-    .filter((msg) => !msg.author.bot && msg.createdTimestamp > threeHoursAgo);
+    .filter(
+      (msg) =>
+        !msg.author.bot &&
+        msg.createdTimestamp > threeHoursAgo &&
+        !msg.member.roles.cache.some((role) =>
+          role.name.includes('TRIVIA MASTER')
+        )
+    );
 
   const contestants = new Map();
   // unique contestants list
