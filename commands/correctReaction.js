@@ -20,8 +20,8 @@ module.exports = {
     const membersWithRole = reaction.message.guild.roles.cache.get(triviaRoleId)
       .members;
     if (reaction.count > 1) {
-      // reaction.remove() removes all reactions including the Trivia Masters. Ignore if already has a reaction
-      return;
+      // If already has reaction, remove user
+      reaction.users.remove(user);
     } else if (!membersWithRole.some((member) => member.id === user.id)) {
       // Remove if not Trivia Master
       await reaction.remove();
