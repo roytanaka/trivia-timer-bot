@@ -4,7 +4,7 @@ module.exports = {
   name: 'final',
   description: 'Post final Score',
   async execute(message) {
-    const scores = getScores(message);
+    const scores = await getScores(message);
 
     const emojis = [
       ':first_place:',

@@ -4,7 +4,7 @@ module.exports = {
   name: 'scores',
   description: 'Tally score of every contestant, sort and post results',
   async execute(message) {
-    const scores = getScores(message);
+    const scores = await getScores(message);
 
     let currentScores = 'Current scores:\n';
     scores.forEach((score) => {
