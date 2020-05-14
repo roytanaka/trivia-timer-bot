@@ -1,6 +1,7 @@
+const Discord = require('discord.js');
 const { scoreKeepers } = require('../config.json');
 
-const getScores = (message) => {
+const getScores = async (message) => {
   // get nicknames of all users on server
   const nicknames = {};
   message.guild.members.cache.forEach((member) => {
@@ -9,22 +10,40 @@ const getScores = (message) => {
   const threeHoursAgo = new Date(
     new Date().setHours(new Date().getHours() - 3)
   );
-  const messages = message.channel.messages.cache
-    .array()
-    //filter out bots and messages earlier 3 hours
-    .filter(
-      (msg) =>
-        !msg.author.bot &&
-        msg.createdTimestamp > threeHoursAgo &&
-        !msg.member.roles.cache.some((role) =>
-          role.name.includes('TRIVIA MASTER')
-        )
+
+  let allMessages = new Discord.Collection();
+
+  let lastId;
+
+  while (true) {
+    const options = { limit: 50 };
+    if (lastId) options.before = lastId;
+
+    const fetchedMessages = await message.channel.messages.fetch(options);
+    const olderMessages = fetchedMessages.some(
+      (msg) => msg.createdTimestamp < threeHoursAgo
     );
+    allMessages = allMessages.concat(fetchedMessages);
+    lastId = fetchedMessages.last().id;
+    if (fetchedMessages.size !== 50 || olderMessages) break;
+  }
+
+  const messages = allMessages.filter(
+    (msg) =>
+      !msg.author.bot &&
+      msg.createdTimestamp > threeHoursAgo &&
+      !msg.member.roles.cache.some((role) =>
+        role.name.includes('TRIVIA MASTER')
+      )
+  );
 
   const contestants = new Map();
   // unique contestants list
-  for (const message of messages) {
-    contestants.set(message.author.id, message.author);
+  for (const messageId of messages.keys()) {
+    contestants.set(
+      messages.get(messageId).author.id,
+      messages.get(messageId).author
+    );
   }
 
   for (const id of contestants.keys()) {
@@ -36,7 +55,7 @@ const getScores = (message) => {
         const author = msg.author.id === id;
         return emoji && author;
       });
-      return total + filteredMessages.length * scoreKeeper.score;
+      return total + filteredMessages.size * scoreKeeper.score;
     }, 0);
 
     const user = contestants.get(id);
@@ -46,14 +65,16 @@ const getScores = (message) => {
   }
 
   const scores = [];
-  contestants.forEach((contestant) => {
+
+  for (const id of contestants.keys()) {
     scores.push({
-      score: contestant.score,
-      user: contestant.nickname || contestant.username,
+      score: contestants.get(id).score,
+      user: contestants.get(id).nickname || contestants.get(id).username,
     });
-  });
+  }
 
   scores.sort((a, b) => b.score - a.score);
+
   return scores;
 };
 
