@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const { scoreKeepers } = require('../config.json');
+const { scoreKeepers, ignore } = require('../config.json');
 
 const getScores = async (message) => {
   // get nicknames of all users on server
@@ -34,7 +34,8 @@ const getScores = async (message) => {
       msg.createdTimestamp > threeHoursAgo &&
       !msg.member.roles.cache.some((role) =>
         role.name.includes('TRIVIA MASTER')
-      )
+      ) &&
+      !msg.reactions.cache.some((reaction) => reaction._emoji.name === ignore)
   );
 
   const contestants = new Map();
