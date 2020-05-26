@@ -20,6 +20,8 @@ module.exports = {
           keeper.score === 1 ? 'point' : 'points'
         }`;
       }
+      noScores +=
+        '\nNote: messages older than 3 hours and messages by the Trivia Master are ignored.';
       await message.channel.send(noScores);
     }
   },
