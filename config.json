@@ -32,6 +32,11 @@
       "name": "bonus",
       "emoji": "⭐",
       "score": 1
+    },
+    {
+      "name": "tie breaker",
+      "emoji": "⚖️",
+      "score": 0.1
     }
   ],
   "ignore": "🚫"
