@@ -19,6 +19,9 @@ client.once('ready', () => {
 });
 
 client.on('messageReactionAdd', (reaction, user) => {
+  // Check if Channel names starts with 'trivia'
+  if (!message.channel.name.startsWith('trivia')) return;
+
   client.commands.get('correctReaction').execute(reaction, user);
 });
 
