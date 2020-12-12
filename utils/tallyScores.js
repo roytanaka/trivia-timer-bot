@@ -1,10 +1,10 @@
 const Discord = require('discord.js');
 const { scoreKeepers, ignore } = require('../config.json');
 
-const getScores = async (message) => {
+const getScores = async message => {
   // get nicknames of all users on server
   const nicknames = {};
-  message.guild.members.cache.forEach((member) => {
+  message.guild.members.cache.forEach(member => {
     nicknames[member.user.id] = member.nickname;
   });
   const threeHoursAgo = new Date(
@@ -21,7 +21,7 @@ const getScores = async (message) => {
 
     const fetchedMessages = await message.channel.messages.fetch(options);
     const olderMessages = fetchedMessages.some(
-      (msg) => msg.createdTimestamp < threeHoursAgo
+      msg => msg.createdTimestamp < threeHoursAgo
     );
     allMessages = allMessages.concat(fetchedMessages);
     lastId = fetchedMessages.last().id;
@@ -29,13 +29,14 @@ const getScores = async (message) => {
   }
 
   const messages = allMessages.filter(
-    (msg) =>
+    msg =>
       !msg.author.bot &&
       msg.createdTimestamp > threeHoursAgo &&
-      !msg.member.roles.cache.some((role) =>
-        role.name.includes('TRIVIA MASTER')
+      !(
+        msg.member !== null &&
+        msg.member.roles.cache.some(role => role.name.includes('TRIVIA MASTER'))
       ) &&
-      !msg.reactions.cache.some((reaction) => reaction._emoji.name === ignore)
+      !msg.reactions.cache.some(reaction => reaction._emoji.name === ignore)
   );
 
   const contestants = new Map();
@@ -49,8 +50,8 @@ const getScores = async (message) => {
 
   for (const id of contestants.keys()) {
     const score = scoreKeepers.reduce((total, scoreKeeper) => {
-      const filteredMessages = messages.filter((msg) => {
-        const emoji = msg.reactions.cache.find((reaction) => {
+      const filteredMessages = messages.filter(msg => {
+        const emoji = msg.reactions.cache.find(reaction => {
           return reaction._emoji.name === scoreKeeper.emoji;
         });
         const author = msg.author.id === id;
