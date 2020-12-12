@@ -7,7 +7,7 @@ client.commands = new Discord.Collection();
 
 const commandFiles = fs
   .readdirSync('./commands')
-  .filter((file) => file.endsWith('.js'));
+  .filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
@@ -26,21 +26,22 @@ client.on('messageReactionAdd', (reaction, user) => {
   client.commands.get('correctReaction').execute(reaction, user);
 });
 
-client.on('message', async (message) => {
+client.on('message', async message => {
   // Check for prefix
   if (!message.content.startsWith(prefix) || message.author.bot) return;
   // Check if role includes Trivia Master
   const roles = message.member.roles.cache;
-  if (!roles.some((role) => role.name.includes('TRIVIA MASTER'))) return;
+  if (!roles.some(role => role.name.includes('TRIVIA MASTER'))) return;
   // Check if Channel names starts with 'trivia'
   if (!message.channel.name.startsWith('trivia')) return;
 
   const command = message.content
     .slice(prefix.length) // remove prefix
-    .split(/ +/) // split by space
+    .split(/[ \d]+/) // split by space or digit
     .shift() // return first value of array
     .toLowerCase(); // case insensitive
 
+  // command can only be letters. No numbers
   switch (command) {
     case 'q':
       client.commands.get('question').execute(message);
