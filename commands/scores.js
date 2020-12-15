@@ -8,8 +8,8 @@ module.exports = {
     const scores = await getScores(message);
     if (scores.length) {
       let currentScores = 'Current scores:\n';
-      scores.forEach((score) => {
-        currentScores += `*${score.user}* - **${score.score}**\n`;
+      scores.forEach(contestant => {
+        currentScores += `*${contestant.user}:*\t**${contestant.score}**\n`;
       });
       await message.channel.send(currentScores.trim());
     } else {
