@@ -1,9 +1,11 @@
 const Discord = require('discord.js');
 const JSONdb = require('simple-json-db');
+const { newGame } = require('./gameControls');
 const db = new JSONdb('utils/database.json');
 
 const { scoreKeepers, ignore } = require('../config.json');
 
+// get nicknames of all users on channel
 const getNicknames = message => {
   return message.guild.members.cache.reduce((acc, member) => {
     acc[member.user.id] = member.nickname;
@@ -12,101 +14,85 @@ const getNicknames = message => {
 };
 
 const getScores = async message => {
-  // get nicknames of all users on server
-  const threeHoursAgo = new Date()
-    .setHours(new Date().getHours() - 3)
-    .toString();
-
-  console.log(
-    'log ~ file: tallyScores.js ~ line 19 ~ threeHoursAgo',
-    threeHoursAgo
-  );
-
-  let triviaGame = db.get(message.author.id);
-  console.log('log ~ file: tallyScores.js ~ line 24 ~ triviaGame', triviaGame);
-  console.log('bool', parseInt(threeHoursAgo) < parseInt(triviaGame.time));
-  if (triviaGame && parseInt(threeHoursAgo) < parseInt(triviaGame.time)) {
-    console.log('game exists');
-  } else {
-    console.log('new game');
-    db.set(message.author.id, { time: new Date().getTime().toString() });
-  }
-
+  const oneHourAgo = new Date(new Date().setHours(new Date().getHours() - 1));
+  const triviaMaster = message.author;
   const nicknames = getNicknames(message);
 
-  // let allMessages = new Discord.Collection();
+  let gameData = db.get(triviaMaster.id);
+  if (!gameData) {
+    console.log('New Game!');
+    gameData = newGame(message);
+  } else if (oneHourAgo > new Date(gameData.time)) {
+    gameData = newGame(message);
+  }
+  const { lastScoreId = null, currentScores = {} } = gameData;
+  gameData.lastScoreId = message.id;
 
-  // let lastId;
-
-  // while (true) {
-  //   const options = { limit: 50 };
-  //   if (lastId) options.before = lastId;
-
-  //   const fetchedMessages = await message.channel.messages.fetch(options);
-  //   const olderMessages = fetchedMessages.some(
-  //     msg => msg.createdTimestamp < threeHoursAgo
-  //   );
-  //   allMessages = allMessages.concat(fetchedMessages);
-  //   lastId = fetchedMessages.last().id;
-  //   if (fetchedMessages.size !== 50 || olderMessages) break;
-  // }
-
-  const fetchedMessages = await message.channel.messages.fetch();
-
-  const messages = fetchedMessages.filter(
+  const options = { limit: 50 };
+  if (lastScoreId) options.after = lastScoreId;
+  const fetchedMessages = await message.channel.messages.fetch(options);
+  const messageAnswers = fetchedMessages.filter(
     msg =>
-      !msg.author.bot &&
+      !msg.author.bot && // Not a bot
+      new Date(msg.createdTimestamp) > oneHourAgo &&
       !(
-        msg.member !== null &&
-        msg.member.roles.cache.some(role => role.name.includes('TRIVIA MASTER'))
+        (
+          msg.member !== null && // Has member object
+          msg.member.roles.cache.some(role =>
+            role.name.includes('TRIVIA MASTER')
+          )
+        ) // and is not TRIVIA MASTER
       ) &&
-      !msg.reactions.cache.some(reaction => reaction._emoji.name === ignore)
+      !msg.reactions.cache.some(reaction => reaction._emoji.name === ignore) // does not include ignore emoji
   );
-  // console.log('log ~ file: tallyScores.js ~ line 50 ~ messages', messages);
-
   const contestants = new Map();
   // unique contestants list
-  for (const messageId of messages.keys()) {
+  for (const messageId of messageAnswers.keys()) {
     contestants.set(
-      messages.get(messageId).author.id,
-      messages.get(messageId).author
+      messageAnswers.get(messageId).author.id,
+      messageAnswers.get(messageId).author
     );
   }
 
-  // console.log(
-  //   'log ~ file: tallyScores.js ~ line 53 ~ contestants',
-  //   contestants
-  // );
-  // for (const id of contestants.keys()) {
-  //   const score = scoreKeepers.reduce((total, scoreKeeper) => {
-  //     const filteredMessages = messages.filter(msg => {
-  //       const emoji = msg.reactions.cache.find(reaction => {
-  //         return reaction._emoji.name === scoreKeeper.emoji;
-  //       });
-  //       const author = msg.author.id === id;
-  //       return emoji && author;
-  //     });
-  //     return total + filteredMessages.size * scoreKeeper.score;
-  //   }, 0);
+  // Calculate score from answers
+  for (const id of contestants.keys()) {
+    const score = scoreKeepers.reduce((total, scoreKeeper) => {
+      const filteredMessages = messageAnswers.filter(msg => {
+        const emoji = msg.reactions.cache.find(reaction => {
+          return reaction._emoji.name === scoreKeeper.emoji;
+        });
+        const author = msg.author.id === id;
+        return emoji && author;
+      });
+      return total + filteredMessages.size * scoreKeeper.score;
+    }, 0);
+    const user = contestants.get(id);
+    user.score = score;
+    user.name = nicknames[id] || user.username;
+    contestants.set(id, user);
+  }
+  // Sum answer scores with db
+  for (const id of contestants.keys()) {
+    if (id in currentScores) {
+      currentScores[id].score += contestants.get(id).score;
+      currentScores[id].user = contestants.get(id).name;
+    } else {
+      currentScores[id] = {
+        score: contestants.get(id).score,
+        user: contestants.get(id).name,
+      };
+    }
+  }
 
-  //   const user = contestants.get(id);
-  //   user.score = score;
-  //   user.nickname = nicknames[id];
-  //   contestants.set(id, user);
-  // }
+  gameData.currentScores = currentScores;
 
-  const scores = [];
+  db.set(triviaMaster.id, gameData);
 
-  // for (const id of contestants.keys()) {
-  //   scores.push({
-  //     score: contestants.get(id).score,
-  //     user: contestants.get(id).nickname || contestants.get(id).username,
-  //   });
-  // }
+  const scoresArray = Object.values(currentScores);
 
-  // scores.sort((a, b) => b.score - a.score);
+  scoresArray.sort((a, b) => b.score - a.score);
 
-  return scores;
+  return scoresArray;
 };
 
 module.exports = getScores;

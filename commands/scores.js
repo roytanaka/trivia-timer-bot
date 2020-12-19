@@ -7,7 +7,7 @@ module.exports = {
   async execute(message) {
     const scores = await getScores(message);
     if (scores.length) {
-      let currentScores = 'Current scores:\n';
+      let currentScores = ':mega: Current scores:\n';
       scores.forEach(contestant => {
         currentScores += `*${contestant.user}:*\t**${contestant.score}**\n`;
       });
