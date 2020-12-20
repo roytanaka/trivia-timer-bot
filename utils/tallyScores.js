@@ -1,8 +1,4 @@
-const Discord = require('discord.js');
-const JSONdb = require('simple-json-db');
-const { newGame } = require('./gameControls');
-const db = new JSONdb('utils/database.json');
-
+const { newGame, saveGame, getGame } = require('./gameControls');
 const { scoreKeepers, ignore } = require('../config.json');
 
 // get nicknames of all users on channel
@@ -18,14 +14,14 @@ const getScores = async message => {
   const triviaMaster = message.author;
   const nicknames = getNicknames(message);
 
-  let gameData = db.get(triviaMaster.id);
+  let gameData = getGame(triviaMaster.id);
   if (!gameData) {
     console.log('New Game!');
     gameData = newGame(message);
   } else if (oneHourAgo > new Date(gameData.time)) {
     gameData = newGame(message);
   }
-  const { lastScoreId = null, currentScores = {} } = gameData;
+  const { lastScoreId, currentScores } = gameData;
   gameData.lastScoreId = message.id;
 
   const options = { limit: 50 };
@@ -86,7 +82,7 @@ const getScores = async message => {
 
   gameData.currentScores = currentScores;
 
-  db.set(triviaMaster.id, gameData);
+  saveGame(triviaMaster.id, gameData);
 
   const scoresArray = Object.values(currentScores);
 

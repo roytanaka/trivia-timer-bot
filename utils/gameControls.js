@@ -1,20 +1,36 @@
 const JSONdb = require('simple-json-db');
 const db = new JSONdb('utils/database.json');
 
+const getGame = id => {
+  return db.get(id);
+};
+
+const saveGame = (id, gameData) => {
+  if ('currentScores' in gameData) {
+    const scores = gameData.currentScores;
+    for (const key in scores) {
+      scores[key].score = Math.round(scores[key].score * 100) / 100;
+    }
+  }
+  return db.set(id, gameData);
+};
+
 const newGame = message => {
-  const author = message.author;
   const gameData = {
     time: new Date(),
-    master: author.username,
+    lastScoreId: message.id,
+    master: message.author.username,
+    currentScores: {},
   };
-  db.set(author.id, gameData);
+  saveGame(message.author.id, gameData);
   return gameData;
 };
 
-const deleteGame = message => {
-  const author = message.author;
-  db.delete(author.id);
+const deleteGame = id => {
+  db.delete(id);
 };
 
+exports.getGame = getGame;
+exports.saveGame = saveGame;
 exports.newGame = newGame;
 exports.deleteGame = deleteGame;
