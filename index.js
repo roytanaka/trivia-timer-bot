@@ -35,16 +35,29 @@ client.on('message', async message => {
   // Check if Channel names starts with 'trivia'
   if (!message.channel.name.startsWith('trivia')) return;
 
-  const command = message.content
+  const fullCommand = message.content
     .slice(prefix.length) // remove prefix
-    .split(/[ \d]+/) // split by space or digit
-    .shift() // return first value of array
-    .toLowerCase(); // case insensitive
+    .split(/ +|(?<=q)\d/i); // split by space or digit
+  const args = fullCommand.slice(1);
+  const command = fullCommand[0].toLowerCase(); // case insensitive
 
   // command can only be letters. No numbers
   switch (command) {
     case 'q':
       client.commands.get('question').execute(message);
+      break;
+    case 'newgame':
+    case 'new-game':
+      client.commands.get('newGame').execute(message);
+      break;
+    case 'correct':
+    case 'correction':
+      if (!message.mentions.users.size) {
+        return message.channel.send(
+          `:robot: You didn't provide a user. @Tag a user to correct their score.`
+        );
+      }
+      client.commands.get('correct').execute(message, args);
       break;
     case 'score':
     case 'scores':
