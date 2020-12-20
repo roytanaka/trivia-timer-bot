@@ -4,6 +4,7 @@ const Discord = require('discord.js');
 const { prefix } = require('./config.json');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
+const gameReactions = require('./utils/gameReactions');
 
 const commandFiles = fs
   .readdirSync('./commands')
@@ -23,7 +24,7 @@ client.on('messageReactionAdd', (reaction, user) => {
   const channel = reaction.message.channel.name;
   if (!channel.startsWith('trivia')) return;
 
-  client.commands.get('correctReaction').execute(reaction, user);
+  gameReactions.execute(reaction, user);
 });
 
 client.on('message', async message => {
