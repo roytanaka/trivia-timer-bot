@@ -5,6 +5,7 @@ const { prefix } = require('./config.json');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const gameReactions = require('./utils/gameReactions');
+const { newGame, gameExists } = require('./utils/gameControls');
 
 const commandFiles = fs
   .readdirSync('./commands')
@@ -35,6 +36,10 @@ client.on('message', async message => {
   if (!roles.some(role => role.name.includes('TRIVIA MASTER'))) return;
   // Check if Channel names starts with 'trivia'
   if (!message.channel.name.startsWith('trivia')) return;
+  // Check if a Game exits for Trivia Master
+  if (!gameExists(message.author.id)) {
+    newGame(message);
+  }
 
   const fullCommand = message.content
     .slice(prefix.length) // remove prefix

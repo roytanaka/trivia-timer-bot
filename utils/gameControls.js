@@ -1,6 +1,10 @@
 const JSONdb = require('simple-json-db');
 const db = new JSONdb('utils/database.json');
 
+const gameExists = id => {
+  return db.has(id);
+};
+
 const getGame = id => {
   return db.get(id);
 };
@@ -30,6 +34,7 @@ const deleteGame = id => {
   db.delete(id);
 };
 
+exports.gameExists = gameExists;
 exports.getGame = getGame;
 exports.saveGame = saveGame;
 exports.newGame = newGame;
