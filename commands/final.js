@@ -1,4 +1,5 @@
 const getScores = require('../utils/tallyScores');
+const { deleteGame } = require('../utils/gameControls');
 
 module.exports = {
   name: 'final',
@@ -24,6 +25,6 @@ module.exports = {
       }
     });
     await message.channel.send(finalScore.trim());
-    // message.delete();
+    deleteGame(message.author.id);
   },
 };
