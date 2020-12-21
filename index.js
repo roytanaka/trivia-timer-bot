@@ -57,7 +57,7 @@ client.on('message', async message => {
       client.commands.get('newGame').execute(message);
       break;
     case 'correct':
-    case 'correction':
+    case 'edit':
       if (!message.mentions.users.size) {
         return message.channel.send(
           `:robot: You didn't provide a user. @Tag a user to correct their score.`
