@@ -65,6 +65,9 @@ client.on('message', async message => {
       }
       client.commands.get('correct').execute(message, args);
       break;
+    case 'a':
+      client.commands.get('answer').execute(message, args);
+      break;
     case 'score':
     case 'scores':
       client.commands.get('scores').execute(message);
