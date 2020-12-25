@@ -23,7 +23,10 @@ module.exports = {
     if (reaction.count > 1) {
       // If already has reaction, remove user
       reaction.users.remove(user);
-    } else if (!membersWithRole.some(member => member.id === user.id)) {
+    } else if (
+      !membersWithRole.some(member => member.id === user.id) &&
+      !user.bot
+    ) {
       // Remove if not Trivia Master
       await reaction.remove();
     }
