@@ -1,9 +1,13 @@
 const { emojis } = require('../config.json');
+const { getGame, saveGame } = require('../utils/gameControls');
 
 module.exports = {
   name: 'question',
   description: 'Start countdown timer when trivia question is posted',
   async execute(message) {
+    const gameData = getGame(message.author.id);
+    gameData.lastQuestionId = message.id;
+    saveGame(message.author.id, gameData);
     const msg = await message.channel.send(`:mega: Timer Starting!`);
     let i = 0;
     const interval = setInterval(() => {

@@ -23,6 +23,7 @@ const newGame = message => {
   const gameData = {
     time: new Date(),
     lastScoreId: message.id,
+    lastQuestionId: message.id,
     master: message.author.username,
     currentScores: {},
   };
