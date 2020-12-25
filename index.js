@@ -43,7 +43,7 @@ client.on('message', async message => {
 
   const fullCommand = message.content
     .slice(prefix.length) // remove prefix
-    .split(/ +|(?<=q)\d/i); // split by space or digit
+    .split(/ +|(?<=^q)\d/i); // split by space or digit
   const args = fullCommand.slice(1);
   const command = fullCommand[0].toLowerCase(); // case insensitive
 
