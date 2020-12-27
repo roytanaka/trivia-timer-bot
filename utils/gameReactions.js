@@ -21,8 +21,13 @@ module.exports = {
     const membersWithRole = reaction.message.guild.roles.cache.get(triviaRoleId)
       .members;
     if (reaction.count > 1) {
-      // If already has reaction, remove user
-      reaction.users.remove(user);
+      if (membersWithRole.some(member => member.id === user.id)) {
+        // Remove bot score reaction
+        await reaction.remove();
+      } else {
+        // If already has reaction, remove user
+        await reaction.users.remove(user);
+      }
     } else if (
       !membersWithRole.some(member => member.id === user.id) &&
       !user.bot
