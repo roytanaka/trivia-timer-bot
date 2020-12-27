@@ -1,5 +1,6 @@
 {
   "prefix": "::",
+  "scoreThreshold": 0.8,
   "emojis": [
     ":one::five:",
     ":one::four:",
