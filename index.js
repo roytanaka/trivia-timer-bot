@@ -58,9 +58,12 @@ client.on('message', async message => {
       break;
     case 'correct':
     case 'edit':
-      if (!message.mentions.users.size) {
+      if (!message.mentions.users.size || isNaN(args[1])) {
         return message.channel.send(
-          `:robot: You didn't provide a user. @Tag a user to correct their score.`
+          ':robot: Dose not compute. The edit command should include ' +
+            'a tagged user and a number. Enter a `+` or `-` before ' +
+            "the number and I'll calculate the score for you. " +
+            'Meep morp. Zeep.\n e.g. `::edit @user +2`'
         );
       }
       client.commands.get('correct').execute(message, args);
