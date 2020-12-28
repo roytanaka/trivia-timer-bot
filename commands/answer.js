@@ -7,7 +7,8 @@ module.exports = {
   name: 'answer',
   description: 'Mark correct score with correct emoji',
   async execute(message, args) {
-    const answers = args.join(' ').split(',');
+    const answers = args.join(' ').split(/\s*,\s*/);
+    console.log('🚀 ~ execute ~ answers', answers);
     const fuz = FuzzySet(answers);
     const gameData = getGame(message.author.id);
     const fetched = await message.channel.messages.fetch({
@@ -28,11 +29,10 @@ module.exports = {
 
     for (const messageId of messageAnswers.keys()) {
       const message = messageAnswers.get(messageId);
-      const unspoilerAnswer = message.content.replace(/\|+/g, '');
-      const [[score = 0]] = fuz.get(unspoilerAnswer) || [[]];
-      console.log('answer:', unspoilerAnswer, 'result:', score);
+      const unSpoilerAnswer = message.content.replace(/\|+/g, '');
+      const [[score = 0]] = fuz.get(unSpoilerAnswer) || [[]];
       if (score > scoreThreshold) {
-        message.react(correctMarker.emoji);
+        await message.react(correctMarker.emoji);
       }
     }
   },
