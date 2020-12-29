@@ -3,3 +3,6 @@ node_modules
 database.json
 
 dist
+
+# Jest Test Coverage
+coverage
