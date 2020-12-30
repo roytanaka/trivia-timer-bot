@@ -1,41 +1,34 @@
-import { Client, Message, TextChannel } from 'discord.js';
+import { Message } from 'discord.js';
 import { messageHandler } from '../src/handlers';
-import { MockMessage, MockUser } from 'jest-discordjs-mocks';
-
-const client = new Client();
 
 describe('Message handler', () => {
-  const message: Message = new MockMessage();
-  const channel = ({
-    send: jest.fn(),
-  } as unknown) as TextChannel;
-  message.channel = channel;
-  message.author = new MockUser(client, { id: 123 });
+  const messageMock: Message = ({
+    channel: {
+      send: jest.fn(),
+    },
+    author: { bot: false },
+  } as unknown) as Message;
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  afterAll(() => {
-    client.destroy();
+  it('should not respond on messages without prefix', async () => {
+    messageMock.content = 'normal message';
+    await messageHandler(messageMock);
+    expect(messageMock.channel.send).not.toHaveBeenCalled();
   });
 
-  it('should not send a message for normal messages', async () => {
-    message.content = 'normal message';
-    await messageHandler(message);
-    expect(message.channel.send).not.toHaveBeenCalled();
-  });
-
-  it('should send "pong" as a message', async () => {
-    message.content = 'ping';
-    await messageHandler(message);
-    expect(message.channel.send).toHaveBeenCalledWith('pong');
+  it('should not respond to users who are Trivia Master', async () => {
+    messageMock.content = '::scores';
+    await messageHandler(messageMock);
+    expect(messageMock.channel.send).not.toHaveBeenCalled();
   });
 
   it('should not send if author is a bot', async () => {
-    message.content = 'ping';
-    message.author.bot = true;
-    await messageHandler(message);
-    expect(message.channel.send).not.toHaveBeenCalled();
+    messageMock.content = 'ping';
+    messageMock.author.bot = true;
+    await messageHandler(messageMock);
+    expect(messageMock.channel.send).not.toHaveBeenCalled();
   });
 });
