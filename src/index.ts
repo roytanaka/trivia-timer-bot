@@ -1,4 +1,4 @@
-import { token, settings } from './config';
+import { token } from './config';
 import { Client } from 'discord.js';
 import { messageHandler } from './handlers';
 

@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 config();
 export const token = process.env.DISCORD_TOKEN;
-export const settings: object = {
+export const settings = {
   prefix: '::',
   scoreThreshold: 0.8,
   timerEmojis: [
