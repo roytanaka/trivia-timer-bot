@@ -1,7 +1,7 @@
 import { TriviaCommand } from '../../typings/commandInterface';
 import { deleteGame, newGame } from '../utils/gameControls';
 
-const scoresCommand: TriviaCommand = {
+const newGameCommand: TriviaCommand = {
   name: 'Scores command',
   trigger: 'newgame',
   aliases: ['new-game'],
@@ -17,4 +17,4 @@ const scoresCommand: TriviaCommand = {
   },
 };
 
-module.exports = scoresCommand;
+module.exports = newGameCommand;
