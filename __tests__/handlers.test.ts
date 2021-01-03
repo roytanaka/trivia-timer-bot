@@ -1,5 +1,15 @@
 import { Message } from 'discord.js';
 import { messageHandler } from '../src/handlers';
+import { gameExists, newGame } from '../src/utils/gameControls';
+jest.mock('../src/utils/gameControls', () => {
+  return {
+    __esModule: true,
+    gameExists: jest.fn(() => false),
+    newGame: jest.fn(),
+  };
+});
+
+jest.mock('../src/commands/scores');
 
 describe('Message handler', () => {
   const messageMock: Message = ({
@@ -51,9 +61,10 @@ describe('Message handler', () => {
     expect(messageMock.channel.send).not.toHaveBeenCalled();
   });
 
-  it('should send message when role is TRIVIA MASTER', async () => {
-    messageFromTMMock.content = '::scores';
+  it('should create a new game when non exists', async () => {
+    messageFromTMMock.content = '::score';
     await messageHandler(messageFromTMMock);
-    expect(messageFromTMMock.channel.send).toHaveBeenCalled();
+    expect(gameExists).toHaveBeenCalled();
+    expect(newGame).toHaveBeenCalledWith(messageFromTMMock);
   });
 });
