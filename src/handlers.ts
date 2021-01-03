@@ -1,8 +1,8 @@
-import Discord from 'discord.js';
-import { Message, TextChannel } from 'discord.js';
+import { Message } from 'discord.js';
 import { settings } from './config';
 import { isTriviaMaster } from './utils/utilFunctions';
 import { TriviaCommand } from '../typings/commandInterface';
+import { newGame, gameExists } from './utils/gameControls';
 
 import fs from 'fs';
 
@@ -16,22 +16,21 @@ for (const file of commandFiles) {
   }
 }
 
-console.log('🚀 ~ commands', triviaCommands);
-
 export const messageHandler = async (message: Message) => {
   const channel = message.channel;
   if (channel.type === 'text' && !channel.name.startsWith('trivia')) return;
   if (message.author.bot) return;
   if (!message.content.startsWith(settings.prefix)) return;
   if (!isTriviaMaster(message)) return;
-
   const [command, ...args] = message.content
     .toLowerCase()
     .slice(settings.prefix.length) // remove prefix
     .split(/ +|(?<=^q)\d/i); // split by space or digit
-  console.log('🚀 ~ messageHandler ~ args', args);
 
   if (!triviaCommands.has(command)) return;
+  if (!gameExists(message.author.id)) {
+    newGame(message);
+  }
 
   triviaCommands.get(command)(message, args);
 };
