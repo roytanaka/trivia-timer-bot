@@ -1,4 +1,4 @@
-import { TriviaCommand } from '../../typings/commandInterface';
+import { TriviaCommand } from '../utils/commandInterface';
 import { getGame, saveGame } from '../utils/gameControls';
 import { settings } from '../config';
 

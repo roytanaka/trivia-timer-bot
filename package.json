@@ -4,7 +4,7 @@
   "description": "A 15 second Trivia Timer and score keeper bot for Discord",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./src/index.ts --ignore 'database.json'",
+    "dev": "nodemon ./src/index.ts --ignore \"database.json\"",
     "build": "tsc",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch"

@@ -1,7 +1,7 @@
 import { Message } from 'discord.js';
 import { settings } from './config';
 import { isTriviaMaster } from './utils/utilFunctions';
-import { TriviaCommand } from '../typings/commandInterface';
+import { TriviaCommand } from './utils/commandInterface';
 import { newGame, gameExists } from './utils/gameControls';
 
 import fs from 'fs';

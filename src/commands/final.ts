@@ -1,4 +1,4 @@
-import { TriviaCommand } from '../../typings/commandInterface';
+import { TriviaCommand } from '../utils/commandInterface';
 import { tallyScores } from '../utils/tallyScores';
 import { deleteGame } from '../utils/gameControls';
 

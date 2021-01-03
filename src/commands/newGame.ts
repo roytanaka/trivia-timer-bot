@@ -1,4 +1,4 @@
-import { TriviaCommand } from '../../typings/commandInterface';
+import { TriviaCommand } from '../utils/commandInterface';
 import { deleteGame, newGame } from '../utils/gameControls';
 
 const newGameCommand: TriviaCommand = {
