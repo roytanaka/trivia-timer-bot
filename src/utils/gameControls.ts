@@ -10,7 +10,7 @@ interface GameData {
   currentScores: { [key: string]: { score: number; user: string } };
 }
 
-export const gameExists = (id: string) => {
+export const gameExists = (id: string): boolean => {
   return db.has(id);
 };
 
@@ -18,7 +18,7 @@ export const getGame = (id: string): GameData => {
   return db.get(id);
 };
 
-export const saveGame = (id: string, gameData: GameData) => {
+export const saveGame = (id: string, gameData: GameData): GameData => {
   const scores = gameData.currentScores;
   for (const key in scores) {
     scores[key].score = Math.round(scores[key].score * 100) / 100;
