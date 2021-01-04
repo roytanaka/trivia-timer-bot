@@ -1,19 +1,15 @@
-import { Message } from 'discord.js';
+import Discord, { Message } from 'discord.js';
 import { settings } from './config';
-import { isTriviaMaster } from './utils/utilFunctions';
-import { TriviaCommand } from './utils/commandInterface';
+import { isTriviaMaster, getCommands } from './utils/utilFunctions';
 import { newGame, gameExists } from './utils/gameControls';
 
-import fs from 'fs';
+const triviaCommands = getCommands();
 
-const triviaCommands = new Map();
-const commandFiles = fs.readdirSync('./src/commands');
-for (const file of commandFiles) {
-  const command: TriviaCommand = require(`./commands/${file}`);
-  triviaCommands.set(command.trigger, command.execute);
-  for (const alias of command.aliases) {
-    triviaCommands.set(alias, command.execute);
-  }
+for (const command of triviaCommands.keys()) {
+  const commandObj = triviaCommands.get(command)!;
+  commandObj.aliases.forEach(alias => {
+    triviaCommands.set(alias, commandObj);
+  });
 }
 
 export const messageHandler = async (message: Message) => {
@@ -27,10 +23,19 @@ export const messageHandler = async (message: Message) => {
     .slice(settings.prefix.length) // remove prefix
     .split(/ +|(?<=^q)\d/i); // split by space or digit
 
-  if (!triviaCommands.has(command)) return;
-  if (!gameExists(message.author.id)) {
-    newGame(message);
+  try {
+    if (!triviaCommands.has(command)) {
+      throw `The command \`::${command}\` does not exist`;
+    }
+    if (!gameExists(message.author.id)) {
+      newGame(message);
+    }
+    await triviaCommands.get(command)?.execute(message, args);
+  } catch (error) {
+    const errorEmbed = new Discord.MessageEmbed()
+      .setColor('#B00020')
+      .setTitle(':robot: Does not compute!')
+      .setDescription(`Oops. ${error}`);
+    message.channel.send(errorEmbed);
   }
-
-  triviaCommands.get(command)(message, args);
 };
