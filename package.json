@@ -21,6 +21,7 @@
     "node": "12.x"
   },
   "devDependencies": {
+    "@types/fuzzyset": "^1.0.2",
     "@types/jest": "^26.0.19",
     "@types/node": "^14.14.16",
     "dotenv": "^8.2.0",
