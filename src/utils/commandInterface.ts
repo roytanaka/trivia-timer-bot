@@ -1,8 +1,9 @@
-import { Message } from 'discord.js';
+import { Message, User } from 'discord.js';
 
 export interface TriviaCommand {
   name: string;
+  description: string;
   trigger: string;
   aliases: string[];
-  execute: (message: Message) => void;
+  execute: (message: Message, args?: string[]) => void;
 }

@@ -4,6 +4,7 @@ import { deleteGame } from '../utils/gameControls';
 
 const finalCommand: TriviaCommand = {
   name: 'Final score command',
+  description: 'Outputs final game score with medals. Also ends current game.',
   trigger: 'final',
   aliases: ['finals'],
   async execute(message) {

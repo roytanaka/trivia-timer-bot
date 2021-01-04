@@ -3,7 +3,8 @@ import { tallyScores } from '../utils/tallyScores';
 import { settings } from '../config';
 
 const scoresCommand: TriviaCommand = {
-  name: 'Scores command',
+  name: 'Scores',
+  description: 'Output current game scores',
   trigger: 'score',
   aliases: ['scores'],
   async execute(message) {

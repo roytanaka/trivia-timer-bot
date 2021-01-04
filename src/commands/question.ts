@@ -3,7 +3,8 @@ import { getGame, saveGame } from '../utils/gameControls';
 import { settings } from '../config';
 
 const questionCommand: TriviaCommand = {
-  name: 'Question',
+  name: 'Question command',
+  description: 'Starts the 15 sec trivia timer',
   trigger: 'q',
   aliases: ['question', 'questions'],
   async execute(message) {
