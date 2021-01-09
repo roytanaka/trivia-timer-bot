@@ -30,7 +30,6 @@ export const tallyScores = async (message: Message) => {
       !isTriviaMaster(msg) &&
       !msg.reactions.cache.some(reaction => reaction.emoji.name === ignore) // does not include ignore emoji
   );
-  console.log('🚀 ~ tallyScores ~ messageAnswers', messageAnswers);
   const contestants = new Map();
   // unique contestants list
   for (const messageId of messageAnswers.keys()) {

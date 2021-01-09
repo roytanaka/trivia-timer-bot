@@ -27,11 +27,9 @@ const finalCommand: TriviaCommand = {
       }
       return outputText;
     }, finalScore);
-    console.log('🚀 ~ outPutScores ~ outPutScores', outPutScores);
     // scores.forEach((player, i) => {
     // });
     await message.channel.send(outPutScores.trim());
-    console.log('message sent');
 
     deleteGame(message.author.id);
   },
