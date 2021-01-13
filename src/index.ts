@@ -1,6 +1,6 @@
 import { token } from './config';
 import { Client } from 'discord.js';
-import { messageHandler } from './handlers';
+import { messageHandler } from './handlers/message';
 
 const client = new Client();
 
