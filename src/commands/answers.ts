@@ -10,8 +10,8 @@ const correctMarker = settings.scoreKeepers.find(
 const editCommand: TriviaCommand = {
   name: 'Answers command',
   description: 'Automatically mark contestant’s correct answers',
-  trigger: 'a',
-  aliases: ['answer', 'answers'],
+  trigger: 'answer',
+  aliases: ['a', 'answers'],
   async execute(message, args) {
     if (args?.length === 0) {
       throw 'No answers in command';
