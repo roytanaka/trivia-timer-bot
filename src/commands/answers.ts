@@ -1,7 +1,7 @@
 import { TriviaCommand } from '../utils/commandInterface';
 import { getGame } from '../utils/gameControls';
 import FuzzySet from 'fuzzyset';
-import { isTriviaMaster } from '../utils/utilFunctions';
+import { checkTriviaMaster } from '../utils/utilFunctions';
 import { settings } from '../config';
 const correctMarker = settings.scoreKeepers.find(
   keeper => keeper.name === 'correct'
@@ -16,7 +16,7 @@ const editCommand: TriviaCommand = {
     if (args?.length === 0) {
       throw 'No answers in command';
     }
-    const answers = args?.join(' ').split(/\s*,\s*/);
+    const answers = args?.join(' ').split(/\s*;\s*/);
     const fuz = FuzzySet(answers);
     const gameData = getGame(message.author.id);
     const fetched = await message.channel.messages.fetch({
@@ -26,7 +26,7 @@ const editCommand: TriviaCommand = {
     const messageAnswers = fetched.filter(
       msg =>
         !msg.author.bot && // Not a bot
-        !isTriviaMaster(msg)
+        !checkTriviaMaster(msg.author)
     );
     const firstAnswerByContestant = new Map();
     for (const messageId of messageAnswers.keys()) {

@@ -1,6 +1,6 @@
 import Discord, { Message } from 'discord.js';
 import { settings } from '../config';
-import { isTriviaMaster, getCommands } from '../utils/utilFunctions';
+import { checkTriviaMaster, getCommands } from '../utils/utilFunctions';
 import { newGame, gameExists } from '../utils/gameControls';
 
 const triviaCommands = getCommands();
@@ -17,7 +17,7 @@ export const messageHandler = async (message: Message) => {
   if (channel.type === 'text' && !channel.name.startsWith('trivia')) return;
   if (message.author.bot) return;
   if (!message.content.startsWith(settings.prefix)) return;
-  if (!isTriviaMaster(message)) return;
+  if (!checkTriviaMaster(message.author)) return;
   const [command, ...args] = message.content
     .toLowerCase()
     .slice(settings.prefix.length) // remove prefix

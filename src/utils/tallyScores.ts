@@ -1,7 +1,7 @@
 import { saveGame, getGame } from './gameControls';
 import { settings } from '../config';
 import { Message } from 'discord.js';
-import { isTriviaMaster } from './utilFunctions';
+import { checkTriviaMaster } from './utilFunctions';
 const { scoreKeepers, ignore } = settings;
 
 // get nicknames of all users on channel
@@ -24,12 +24,13 @@ export const tallyScores = async (message: Message) => {
   gameData.lastScoreId = message.id;
 
   const fetched = await message.channel.messages.fetch({ after: lastScoreId });
-  const messageAnswers = fetched.filter(
-    msg =>
-      !msg.author.bot && // Not a bot
-      !isTriviaMaster(msg) &&
-      !msg.reactions.cache.some(reaction => reaction.emoji.name === ignore) // does not include ignore emoji
-  );
+  const messageAnswers = fetched.filter(msg => {
+    return (
+      !msg.author.bot &&
+      !checkTriviaMaster(msg.author) &&
+      !msg.reactions.cache.some(reaction => reaction.emoji.name === ignore)
+    );
+  });
   const contestants = new Map();
   // unique contestants list
   for (const messageId of messageAnswers.keys()) {

@@ -1,14 +1,14 @@
 import { MessageReaction, PartialUser, TextChannel, User } from 'discord.js';
 import { settings } from '../config';
+import { checkTriviaMaster } from '../utils/utilFunctions';
 
 export const reactionHandler = async (
   reaction: MessageReaction,
   user: User | PartialUser
 ) => {
-  if (!(user instanceof User)) {
-    return;
-  }
-  const channel = reaction.message.channel as TextChannel;
+  if (!(user instanceof User)) return;
+  const channel = reaction.message.channel;
+  if (!(channel instanceof TextChannel)) return;
   if (!channel.name.startsWith('trivia')) return;
 
   const reactedEmoji = reaction.emoji.name;
@@ -18,16 +18,8 @@ export const reactionHandler = async (
   const isRestricted = restrictedEmojis.includes(reactedEmoji);
 
   if (!isRestricted) return;
-  // get Trivia Master role ID
-  const guildRoles = reaction.message.guild?.roles.cache!;
-  const triviaRole = guildRoles.find(role => {
-    return role.name.includes('TRIVIA MASTER');
-  })!;
-  // Members with Trivia Master Role
-  const membersWithTriviaRole = guildRoles.get(triviaRole.id)?.members!;
-  const isTriviaMaster = membersWithTriviaRole.some(
-    member => member.id === user.id
-  );
+
+  const isTriviaMaster = checkTriviaMaster(user);
 
   if (reaction.count && reaction.count > 1) {
     if (isTriviaMaster) {
