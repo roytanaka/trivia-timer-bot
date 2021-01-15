@@ -1,6 +1,7 @@
 import { Message } from 'discord.js';
 import { TriviaCommand } from './commandInterface';
 import fs from 'fs';
+import { join } from 'path';
 
 export const isTriviaMaster = (message: Message) => {
   return message?.member?.roles.cache.some(role =>
@@ -8,11 +9,12 @@ export const isTriviaMaster = (message: Message) => {
   );
 };
 
-export const getCommands = (): Map<string, TriviaCommand> => {
-  const triviaCommands = new Map();
-  const commandFiles = fs.readdirSync('./src/commands');
+export const getCommands = () => {
+  const triviaCommands = new Map<string, TriviaCommand>();
+  const commandFolder = join(__dirname, '..', 'commands');
+  const commandFiles = fs.readdirSync(commandFolder);
   for (const file of commandFiles) {
-    const command = require(`../commands/${file}`);
+    const command: TriviaCommand = require(join(commandFolder, file));
     triviaCommands.set(command.trigger, command);
   }
   return triviaCommands;
