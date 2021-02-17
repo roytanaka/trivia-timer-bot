@@ -4,6 +4,7 @@ export interface TriviaCommand {
   name: string;
   description: string;
   trigger: string;
+  arguments?: string[];
   aliases: string[];
   execute: (message: Message, args?: string[]) => void;
 }

@@ -4,6 +4,8 @@ import { deleteGame, newGame } from '../utils/gameControls';
 import { settings } from '../config';
 import { getCommands } from '../utils/utilFunctions';
 
+const { scoreKeepers, prefix } = settings;
+
 const newGameCommand: TriviaCommand = {
   name: 'New game command',
   description: 'Start a new game. Clears existing game if one exists.',
@@ -15,7 +17,7 @@ const newGameCommand: TriviaCommand = {
       deleteGame(author.id);
       newGame(message);
       let usableEmojis = '';
-      for (const keeper of settings.scoreKeepers) {
+      for (const keeper of scoreKeepers) {
         usableEmojis += `\n${keeper.emoji}  “${keeper.name}” for ${
           keeper.score
         } ${keeper.score === 1 ? 'point' : 'points'}`;
@@ -23,7 +25,10 @@ const newGameCommand: TriviaCommand = {
       const commands = getCommands();
       let usableCommands = '';
       for (const command of commands.values()) {
-        usableCommands += `\n\`::${command.trigger}\` ${command.description}`;
+        const args = command.arguments
+          ? ` [${command.arguments.join(' ')}]`
+          : '';
+        usableCommands += `\n\`${prefix}${command.trigger}${args}\` ${command.description}`;
       }
       const newGameEmbed = new Discord.MessageEmbed()
         .setColor('#7289da')

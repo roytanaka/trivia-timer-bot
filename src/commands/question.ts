@@ -6,6 +6,7 @@ const questionCommand: TriviaCommand = {
   name: 'Question command',
   description: 'Starts the 15 sec trivia timer',
   trigger: 'q',
+  arguments: ['Trivia question'],
   aliases: ['question', 'questions'],
   async execute(message) {
     const gameData = getGame(message.author.id);

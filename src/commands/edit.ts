@@ -17,9 +17,9 @@ const calculateScore = (scoreUpdate: string, score: number) => {
 
 const editCommand: TriviaCommand = {
   name: 'Edit score command',
-  description:
-    'Edit a user’s score. Be sure to @tag the user and score in the command.',
+  description: 'Edit a user’s score.',
   trigger: 'edit',
+  arguments: ['@user', '<number>'],
   aliases: ['edits', 'correct', 'correction'],
   async execute(message, args) {
     if (

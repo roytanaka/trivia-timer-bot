@@ -11,6 +11,7 @@ const editCommand: TriviaCommand = {
   name: 'Answers command',
   description: 'Automatically mark contestant’s correct answers',
   trigger: 'answer',
+  arguments: ['Trivia answer'],
   aliases: ['a', 'answers'],
   async execute(message, args) {
     if (args?.length === 0) {
