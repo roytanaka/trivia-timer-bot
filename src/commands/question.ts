@@ -1,9 +1,12 @@
-const { emojis } = require('../config.json');
-const { getGame, saveGame } = require('../utils/gameControls');
+import { TriviaCommand } from '../utils/commandInterface';
+import { getGame, saveGame } from '../utils/gameControls';
+import { settings } from '../config';
 
-module.exports = {
-  name: 'question',
-  description: 'Start countdown timer when trivia question is posted',
+const questionCommand: TriviaCommand = {
+  name: 'Question command',
+  description: 'Starts the 15 sec trivia timer',
+  trigger: 'q',
+  aliases: ['question', 'questions'],
   async execute(message) {
     const gameData = getGame(message.author.id);
     gameData.lastQuestionId = message.id;
@@ -17,9 +20,13 @@ module.exports = {
         clearInterval(interval);
       } else if (i % 5 === 0 || (i >= 12 && i <= 14)) {
         // Update timer at 15, 10, 5, 3, 2, 1
-        msg.edit(`:mega: Submit your answer in ${emojis[i]} seconds!`);
+        msg.edit(
+          `:mega: Submit your answer in ${settings.timerEmojis[i]} seconds!`
+        );
       }
       i++;
     }, 1000);
   },
 };
+
+module.exports = questionCommand;

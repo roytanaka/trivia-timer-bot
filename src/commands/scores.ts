@@ -1,11 +1,14 @@
-const getScores = require('../utils/tallyScores');
-const { scoreKeepers } = require('../config.json');
+import { TriviaCommand } from '../utils/commandInterface';
+import { tallyScores } from '../utils/tallyScores';
+import { settings } from '../config';
 
-module.exports = {
-  name: 'scores',
-  description: 'Tally score of every contestant, sort and post results',
+const scoresCommand: TriviaCommand = {
+  name: 'Scores',
+  description: 'Output current game scores',
+  trigger: 'score',
+  aliases: ['scores'],
   async execute(message) {
-    const scores = await getScores(message);
+    const scores = await tallyScores(message);
     if (scores.length) {
       let currentScores = ':mega: Current scores:\n';
       scores.forEach(contestant => {
@@ -15,7 +18,7 @@ module.exports = {
     } else {
       let noScores =
         'No Scores Found. Mark messages with the following reactions:';
-      for (const keeper of scoreKeepers) {
+      for (const keeper of settings.scoreKeepers) {
         noScores += `\n${keeper.emoji} “${keeper.name}” for ${keeper.score} ${
           keeper.score === 1 ? 'point' : 'points'
         }`;
@@ -24,3 +27,5 @@ module.exports = {
     }
   },
 };
+
+module.exports = scoresCommand;

@@ -1,15 +1,21 @@
-const { saveGame, getGame } = require('./gameControls');
-const { scoreKeepers, ignore } = require('../config.json');
+import { saveGame, getGame } from './gameControls';
+import { settings } from '../config';
+import { Message } from 'discord.js';
+import { checkTriviaMaster } from './utilFunctions';
+const { scoreKeepers, ignore } = settings;
 
 // get nicknames of all users on channel
-const getNicknames = message => {
-  return message.guild.members.cache.reduce((acc, member) => {
-    acc[member.user.id] = member.nickname;
-    return acc;
-  }, {});
+const getNicknames = (message: Message) => {
+  return message.guild!.members.cache.reduce(
+    (acc: { [key: string]: string }, member) => {
+      acc[member.user.id] = member.nickname ?? member.user.username;
+      return acc;
+    },
+    {}
+  );
 };
 
-const getScores = async message => {
+export const tallyScores = async (message: Message) => {
   const triviaMaster = message.author;
   const nicknames = getNicknames(message);
 
@@ -18,22 +24,19 @@ const getScores = async message => {
   gameData.lastScoreId = message.id;
 
   const fetched = await message.channel.messages.fetch({ after: lastScoreId });
-  const messageAnswers = fetched.filter(
-    msg =>
-      !msg.author.bot && // Not a bot
-      !(
-        msg.member !== null && // Has member object
-        // Not Trivia Master
-        msg.member.roles.cache.some(role => role.name.includes('TRIVIA MASTER'))
-      ) &&
-      !msg.reactions.cache.some(reaction => reaction._emoji.name === ignore) // does not include ignore emoji
-  );
+  const messageAnswers = fetched.filter(msg => {
+    return (
+      !msg.author.bot &&
+      !checkTriviaMaster(msg.author) &&
+      !msg.reactions.cache.some(reaction => reaction.emoji.name === ignore)
+    );
+  });
   const contestants = new Map();
   // unique contestants list
   for (const messageId of messageAnswers.keys()) {
     contestants.set(
-      messageAnswers.get(messageId).author.id,
-      messageAnswers.get(messageId).author
+      messageAnswers.get(messageId)?.author.id,
+      messageAnswers.get(messageId)?.author
     );
   }
   // Calculate score from answers
@@ -41,10 +44,10 @@ const getScores = async message => {
     const score = scoreKeepers.reduce((total, scoreKeeper) => {
       const filteredMessages = messageAnswers.filter(msg => {
         const emoji = msg.reactions.cache.find(reaction => {
-          return reaction._emoji.name === scoreKeeper.emoji;
+          return reaction.emoji.name === scoreKeeper.emoji;
         });
         const author = msg.author.id === id;
-        return emoji && author;
+        return !!emoji && author;
       });
       return total + filteredMessages.size * scoreKeeper.score;
     }, 0);
@@ -72,5 +75,3 @@ const getScores = async message => {
   );
   return scoresArray;
 };
-
-module.exports = getScores;

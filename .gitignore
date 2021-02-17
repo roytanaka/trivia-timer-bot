@@ -2,5 +2,7 @@ node_modules
 *.env
 database.json
 
-coverage
 dist
+
+# Jest Test Coverage
+coverage
