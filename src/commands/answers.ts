@@ -39,7 +39,6 @@ const editCommand: TriviaCommand = {
       const message = firstAnswerByContestant.get(userId);
       const unSpoilerAnswer = message.content.replace(/\|+/g, '');
       const [[score = 0]] = fuz.get(unSpoilerAnswer) || [[]];
-      console.log('🚀 ~ answer:', unSpoilerAnswer, 'score', score);
       if (score > settings.scoreThreshold) {
         await message.react(correctMarker.emoji);
       }
