@@ -19,7 +19,7 @@ export const reactionHandler = async (
 
   if (!isRestricted) return;
 
-  const isTriviaMaster = checkTriviaMaster(user);
+  const isTriviaMaster = checkTriviaMaster(user, reaction.message.guild!);
 
   if (reaction.count && reaction.count > 1) {
     if (isTriviaMaster) {

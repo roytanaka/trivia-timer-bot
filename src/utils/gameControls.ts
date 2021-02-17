@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import JSONdb from 'simple-json-db';
-const db = new JSONdb('./database.json');
+const db = new JSONdb('./dist/database.json');
 
 interface GameData {
   time: Date;

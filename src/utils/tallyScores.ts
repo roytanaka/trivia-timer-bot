@@ -27,7 +27,7 @@ export const tallyScores = async (message: Message) => {
   const messageAnswers = fetched.filter(msg => {
     return (
       !msg.author.bot &&
-      !checkTriviaMaster(msg.author) &&
+      !checkTriviaMaster(msg.author, msg.guild!) &&
       !msg.reactions.cache.some(reaction => reaction.emoji.name === ignore)
     );
   });

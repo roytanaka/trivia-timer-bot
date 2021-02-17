@@ -17,7 +17,7 @@ export const messageHandler = async (message: Message) => {
   if (channel.type === 'text' && !channel.name.startsWith('trivia')) return;
   if (message.author.bot) return;
   if (!message.content.startsWith(settings.prefix)) return;
-  if (!checkTriviaMaster(message.author)) return;
+  if (!checkTriviaMaster(message.author, message.guild!)) return;
   const [command, ...args] = message.content
     .toLowerCase()
     .slice(settings.prefix.length) // remove prefix

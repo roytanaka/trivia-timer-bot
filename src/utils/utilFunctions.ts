@@ -1,18 +1,13 @@
-import { Role, User } from 'discord.js';
+import { Guild, Role, User } from 'discord.js';
 import { TriviaCommand } from './commandInterface';
 import fs from 'fs';
 import { join } from 'path';
 
-export const checkTriviaMaster = (user: User) => {
-  const guilds = user.client.guilds.cache;
-  const roles = guilds.reduce((acc: Role[], guild) => {
-    const roles = guild.roles.cache.array();
-    acc.push(...roles);
-    return acc;
-  }, []);
-  const triviaMasterRole = roles.find(role =>
-    /trivia master/i.test(role.name)
-  )!;
+export const checkTriviaMaster = (user: User, guild: Guild) => {
+  const triviaMasterRole = guild.roles.cache
+    .array()
+    .find(role => /trivia master/i.test(role.name))!;
+
   return triviaMasterRole.members.some(member => member.id === user.id);
 };
 

@@ -27,7 +27,7 @@ const editCommand: TriviaCommand = {
     const messageAnswers = fetched.filter(
       msg =>
         !msg.author.bot && // Not a bot
-        !checkTriviaMaster(msg.author)
+        !checkTriviaMaster(msg.author, msg.guild!)
     );
     const firstAnswerByContestant = new Map();
     for (const messageId of messageAnswers.keys()) {
