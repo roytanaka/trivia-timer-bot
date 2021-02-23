@@ -9,7 +9,8 @@ const correctMarker = settings.scoreKeepers.find(
 
 const editCommand: TriviaCommand = {
   name: 'Answers command',
-  description: 'Automatically mark contestant’s correct answers',
+  description:
+    'Automatically mark contestant’s correct answers. Separate multiple answers with semicolon ";"',
   trigger: 'answer',
   arguments: ['Trivia answer'],
   aliases: ['a', 'answers'],
